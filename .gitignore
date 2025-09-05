@@ -1,0 +1,46 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Coverage directory (for tests)
+coverage/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+
+# React specific
+*.cache
+*.parcel-cache
+.eslintcache
+
+# Next.js (if used later)
+.next/
+out/
+
+# Typescript (if added later)
+*.tsbuildinfo
+
+# Temporary
+tmp/
+temp/
