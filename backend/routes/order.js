@@ -40,6 +40,31 @@ router.post("/place", verifyToken, async (req, res) => {
 
 })
 
+router.put("/:id/complete",verifyToken, async(req,res)=>{
+    try{
+        const order=await Order.findById(req.params.id).populate("items.product");
+        if(!order) return res.status(404).json({message: "order not found"});
+
+        if(order.status==="completed"){
+            return res.status(400).json({message: "order is already completed"})
+        }
+
+        for(let item of order.items){
+            const product=await Product.findById(item.product._id);
+            if(product.stock<item.quantity){
+                return res.status(405).json({message: `Not enough stock for ${product.name}`})
+            }
+            product.stock-=item.quantity;
+            await product.save();
+        }
+        order.status="completed";
+        await order.save();
+        res.json({message:"Order completed and stock updated",order})
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
 router.put("/:id", verifyToken, async (req, res) => {
     try {
         const { status } = req.body;

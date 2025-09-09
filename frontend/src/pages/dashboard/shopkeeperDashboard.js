@@ -11,12 +11,16 @@ export default function ShopkeeperDashboard() {
     const [form, setForm] = useState({ name: "", description: "", price: "", stock: "" });
     const [activeTab, setActiveTab] = useState("products");
     const [editingId, setEditingId] = useState(null);
+    const [lowStock, setLowStock] = useState([]);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const res = await API.get("/products");
                 setProducts(res.data);
+
+                const low = res.data.filter(p => p.stock <= 5)
+                setLowStock(low)
             } catch (error) {
                 alert(error)
             }
@@ -70,6 +74,10 @@ export default function ShopkeeperDashboard() {
 
                 <h2>shopkeeper Dashboard</h2>
 
+                {lowStock.length > 0 && (
+                    <div className="low-stock-alert">
+                        ⚠️ Low Stock Alert: {lowStock.map(p => p.name).join(", ")}
+                    </div>)}
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
                     <button
                         className={`tab-button ${activeTab === "products" ? "active" : ""}`}
@@ -91,7 +99,7 @@ export default function ShopkeeperDashboard() {
                             onChange={handleChange} required />
                         <input type="text" name="stock" placeholder="Stock" value={form.stock}
                             onChange={handleChange} required />
-                        
+
                         {editingId ?
                             <button type="button" onClick={updateProduct}>updateProduct</button>
                             : <button type="button" onClick={addProduct}>Add Product</button>
@@ -111,7 +119,7 @@ export default function ShopkeeperDashboard() {
                     </div>
                 </>}
 
-                {activeTab === "orders" && <ShopkeeperOrders />}
+                {activeTab === "orders" && <ShopkeeperOrders setProducts={setProducts} />}
                 {activeTab === "analytics" && <ShopkeeperAnalytics />}
 
             </div>

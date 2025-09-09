@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import API from "../../api";
+import { AuthContext } from "../../context/AuthContext";
 
-export default function ShopkeeperOrders() {
+export default function ShopkeeperOrders({setProducts}) {
     const [orders, setOrders] = useState([]);
+    const { token } = useContext(AuthContext);
 
     const fetchOrders = async () => {
         try {
@@ -17,10 +19,21 @@ export default function ShopkeeperOrders() {
         fetchOrders();
     }, []);
 
-    const updateStatus = async (OrderId, status) => {
-        await API.put(`/orders/${OrderId}`, { status });
-        fetchOrders();
+    const completeOrder = async (id) => {
+        try {
+            const res = await API.put(`/orders/${id}/complete`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            alert(res.data.message);
+            setOrders(orders.map(o => o._id === id ? res.data.order : o));
+            const productsRes = await API.get("/products");
+            setProducts(productsRes.data);
+
+        } catch (err) {
+            alert(err.response?.data?.message || "Failed to complete order");
+        }
     }
+
 
     return (
         <div className="myorder-container">
@@ -31,15 +44,16 @@ export default function ShopkeeperOrders() {
                         <li key={order._id} className="order-item">
                             <p>Customer:{order.user.name}</p>
                             <p>Total: ${order.totalPrice}</p>
-                            <p>Status:{order.status}</p>
                             <ul>
                                 {order.items.map(i => (
                                     <li key={i.product._id}>{i.product.name}X{i.quantity}</li>
                                 ))
                                 }
                             </ul>
-                            <button onClick={()=>updateStatus(order._id, "processing")}>Processing</button>
-                            <button onClick={()=>updateStatus(order._id, "completed")}>Completed</button>
+                            <p>Status:{order.status}</p>
+                            {order.status === "pending" &&
+                                <button onClick={() => completeOrder(order._id)}>✅ Complete Order</button>
+                            }
                         </li>
                     ))}
                 </ul>

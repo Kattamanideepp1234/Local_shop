@@ -32,8 +32,8 @@ export default function CustomerDashboard() {
     return (
         <div >
 
-            <div className="customer-container">
-                <h2>customer Dashboard</h2>
+            <div className="customer-container">/
+                <h2>Customer Dashboard</h2>
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
                     <button
                         className={`tab-button ${activeTab === "products" ? "active" : ""}`}
