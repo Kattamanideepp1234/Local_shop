@@ -10,9 +10,16 @@ export default function CustomerDashboard() {
     const [activeTab, setActiveTab] = useState("products");
     const { token } = useContext(AuthContext);
 
-
+    const fetchProducts=async()=>{
+        try{
+            const res= await API.get("/products");
+            setProducts(res.data);
+        }catch(error){
+            alert(error);
+        }
+    }
     useEffect(() => {
-        API.get("/products").then((res) => setProducts(res.data))
+        fetchProducts();
     }, [])
 
     const addToCart = async (productId) => {
@@ -31,9 +38,7 @@ export default function CustomerDashboard() {
 
     return (
         <div >
-
-            <div className="customer-container">/
-                <h2>Customer Dashboard</h2>
+            <div className="customer-container">
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
                     <button
                         className={`tab-button ${activeTab === "products" ? "active" : ""}`}
@@ -46,7 +51,7 @@ export default function CustomerDashboard() {
                 {activeTab === "products" && <>
                     <div className="product-list">
                         {products.map(p => (
-                            <div className="product-card">
+                            <div className="product-card" key={p._id}>
                                 <div>
                                     <strong>{p.name}</strong>
                                     <div className="product-meta">

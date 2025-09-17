@@ -7,6 +7,7 @@ import products from "./routes/products.js"
 import carts from "./routes/cart.js";
 import orders from "./routes/order.js";
 import analytics from './routes/analytics.js';
+import admin from "./routes/admin.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use("/api/products",products);
 app.use("/api/cart",carts);
 app.use("/api/orders",orders);
 app.use("/api/analytics",analytics);
+app.use("/api/admin",admin)
 
 
 

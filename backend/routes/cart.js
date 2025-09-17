@@ -40,7 +40,7 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.delete("/:productId", verifyToken, async (req, res) => {
     try {
-        const cart = await Cart.findOne({ user: req.user.id })
+        let cart = await Cart.findOne({ user: req.user.id })
         if (!cart) return res.status(400).json({ message: "cart not Found" });
 
         cart.items = cart.items.filter((item) => item.product.toString() !== req.params.productId)
@@ -49,7 +49,7 @@ router.delete("/:productId", verifyToken, async (req, res) => {
         cart = await cart.populate("items.product")
         res.json(cart);
     } catch (error) {
-        res.status(500).json({ message: error.messsage })
+        res.status(500).json({ message: error.message })
     }
 })
 

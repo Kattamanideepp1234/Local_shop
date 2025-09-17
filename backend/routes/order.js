@@ -86,12 +86,12 @@ router.put("/:id", verifyToken, async (req, res) => {
 })
 
 router.get("/shopkeeper", verifyToken, async (req, res) => {
-    const orders = await Order.find({ shopkeeper: req.user.id }).populate("items.product user")
+    const orders = await Order.find({ shopkeeper: req.user.id }).populate("items.product user").sort({createdAt: -1})
     res.json(orders)
 })
 
 router.get("/my", verifyToken, async (req, res) => {
-    const orders = await Order.find({ user: req.user.id }).populate("items.product")
+    const orders = await Order.find({ user: req.user.id }).populate("items.product").sort({createdAt: -1})
     res.json(orders)
 })
 

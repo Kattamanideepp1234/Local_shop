@@ -16,7 +16,7 @@ export default function ShopkeeperDashboard() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await API.get("/products");
+                const res = await API.get("/products/my-products");
                 setProducts(res.data);
 
                 const low = res.data.filter(p => p.stock <= 5)
@@ -71,8 +71,6 @@ export default function ShopkeeperDashboard() {
     return (
         <div>
             <div className="shopkeeper-container">
-
-                <h2>shopkeeper Dashboard</h2>
 
                 {lowStock.length > 0 && (
                     <div className="low-stock-alert">

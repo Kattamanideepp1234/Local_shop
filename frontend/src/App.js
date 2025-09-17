@@ -29,7 +29,6 @@ function App() {
         <Route path="/shopkeeper" element={user?.role === "shopkeeper" ? <ShopkeeperDashboard /> : <Navigate to="/login" />} /> 
         <Route path="/admin" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/login" />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-
       </Routes>
     </Router>
 

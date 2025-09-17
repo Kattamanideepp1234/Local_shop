@@ -9,7 +9,7 @@ const orderSchema=mongoose.Schema({
         price:Number
     }],
     totalPrice:{type:Number, required: true},
-    status:{type:String, enum:["pending","processing", "completed"], default: "pending"}
+    status:{type:String, enum:["pending","processing", "completed","Cancelled by admin"], default: "pending"}
 },{timestamps:true});
 
 export default mongoose.model("Orders",orderSchema);

@@ -43,7 +43,7 @@ export default function ShopkeeperOrders({setProducts}) {
                     {orders.map(order => (
                         <li key={order._id} className="order-item">
                             <p>Customer:{order.user.name}</p>
-                            <p>Total: ${order.totalPrice}</p>
+                            <p>Total: ₹{order.totalPrice}</p>
                             <ul>
                                 {order.items.map(i => (
                                     <li key={i.product._id}>{i.product.name}X{i.quantity}</li>
