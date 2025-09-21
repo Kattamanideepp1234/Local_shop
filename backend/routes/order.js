@@ -2,11 +2,11 @@ import express from "express";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import { verifyToken ,checkNotBlocked} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/place", verifyToken, async (req, res) => {
+router.post("/place", verifyToken,checkNotBlocked, async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.user.id }).populate("items.product");
         if (!cart || cart.items.length === 0) return res.status(400).json({ message: "Cart is Empty" });
@@ -40,7 +40,7 @@ router.post("/place", verifyToken, async (req, res) => {
 
 })
 
-router.put("/:id/complete",verifyToken, async(req,res)=>{
+router.put("/:id/complete",verifyToken,checkNotBlocked, async(req,res)=>{
     try{
         const order=await Order.findById(req.params.id).populate("items.product");
         if(!order) return res.status(404).json({message: "order not found"});
@@ -65,7 +65,7 @@ router.put("/:id/complete",verifyToken, async(req,res)=>{
     }
 })
 
-router.put("/:id", verifyToken, async (req, res) => {
+router.put("/:id", verifyToken,checkNotBlocked, async (req, res) => {
     try {
         const { status } = req.body;
         const order = await Order.findOneAndUpdate(

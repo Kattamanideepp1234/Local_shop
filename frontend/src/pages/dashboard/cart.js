@@ -14,20 +14,25 @@ export default function Cart() {
     }
 
     const removeProduct = async (id) => {
-        try{
-        const res = await API.delete(`/cart/${id}`);
-        setCart(res.data)
-        }catch(error){
-            alert("Failed to remove Product",error);
+        try {
+            const res = await API.delete(`/cart/${id}`);
+            setCart(res.data)
+        } catch (error) {
+            alert("Failed to remove Product", error);
         }
     }
     const placeOrder = async () => {
-        try{
-        await API.post("/orders/place");
-        alert("Order Placed");
-        fetchCart();}
-        catch(error){
-            alert("failed to place order",error)
+        try {
+            await API.post("/orders/place");
+            alert("Order Placed");
+            fetchCart();
+        }
+        catch (error) {
+            if (error.response?.status === 403) {
+                alert("🚫 You are blocked by Admin. You cannot add products.");
+            } else {
+                alert(error.response?.data?.message || "Failed to add product");
+            }
         }
     }
 
@@ -59,7 +64,7 @@ export default function Cart() {
                     <div className="cart-total">
                         <strong>Total: ₹{totalPrice}</strong>
                     </div>
-                    < button className="place-order-btn" onClick={placeOrder}  disabled={cart.items.length === 0}>Place Order</button>
+                    < button className="place-order-btn" onClick={placeOrder} disabled={cart.items.length === 0}>Place Order</button>
                 </div>)
 
             }

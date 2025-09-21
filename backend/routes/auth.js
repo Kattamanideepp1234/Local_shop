@@ -38,7 +38,7 @@ router.post("/login", async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: "Invaild credentails" });
 
         const token = jwt.sign(
-            { id: user._id, role: user.role },
+            { id: user._id, role: user.role, isBlocked:user.isBlocked},
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         );

@@ -30,13 +30,20 @@ export default function ShopkeeperDashboard() {
 
     const addProduct = async (e) => {
         e.preventDefault();
-
-        const res = await API.post("/products", form, {
-            headers: { Authorization: `Bearer ${token}` }
+        try {
+            const res = await API.post("/products", form, {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+            )
+            setProducts([...products, res.data])
+            setForm({ name: "", description: "", price: "", stock: "" })
+        } catch (err) {
+            if (err.response?.status === 403) {
+                alert("🚫 You are blocked by Admin. You cannot complete orders.");
+            } else {
+                alert(err.response?.data?.message || "Failed to complete order");
+            }
         }
-        )
-        setProducts([...products, res.data])
-        setForm({ name: "", description: "", price: "", stock: "" })
     }
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -52,12 +59,20 @@ export default function ShopkeeperDashboard() {
     };
 
     const updateProduct = async () => {
-        const res = await API.put(`/products/${editingId}`, form, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        setProducts(products.map((p) => p._id === editingId ? res.data : p));
-        setEditingId(null)
-        setForm({ name: "", description: "", price: "", stock: "" })
+        try {
+            const res = await API.put(`/products/${editingId}`, form, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setProducts(products.map((p) => p._id === editingId ? res.data : p));
+            setEditingId(null)
+            setForm({ name: "", description: "", price: "", stock: "" })
+        } catch (err) {
+            if (err.response?.status === 403) {
+                alert("🚫 You are blocked by Admin. You cannot complete orders.");
+            } else {
+                alert(err.response?.data?.message || "Failed to complete order");
+            }
+        }
 
     }
 

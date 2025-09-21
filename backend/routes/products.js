@@ -1,17 +1,10 @@
 import express from "express";
-import { verifyToken, isShopkeeper } from "../middleware/authMiddleware.js";
+import { verifyToken, isShopkeeper,checkNotBlocked } from "../middleware/authMiddleware.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
 
-router.get("/",verifyToken,isShopkeeper, async (req, res) => {
-    try {
-        const products = await Product.find().populate("owner", "name email");
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-})
+
 
 router.get("/my-products",verifyToken, isShopkeeper, async(req,res)=>{
     try{
@@ -22,29 +15,28 @@ router.get("/my-products",verifyToken, isShopkeeper, async(req,res)=>{
     }
 })
 
+router.get("/", async (req, res) => {
+  try {
+    const { search } = req.query;
 
-/*router.get("/", async (req, res) => {
-    try {
-        const { search } = req.query;
-
-        let query = {};
-        if (search) {
-            query = {
-                $or: [
-                    { name: { $regex: search, $options: "i" } },
-                    { description: { $regex: search, $options: "i" } }
-                ]
-            };
-        }
-
-        const products = await Product.find(query).populate("owner", "name email");
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } }
+        ]
+      };
     }
-}); */
 
-router.post("/", verifyToken, isShopkeeper, async (req, res) => {
+    const products = await Product.find(query).populate("owner", "name email");
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.post("/", verifyToken, isShopkeeper,checkNotBlocked, async (req, res) => {
     console.log("Incoming Body:", req.body);
     try {
         const { name, description, price, stock } = req.body;
@@ -56,7 +48,7 @@ router.post("/", verifyToken, isShopkeeper, async (req, res) => {
     }
 });
 
-router.put("/:id", verifyToken, isShopkeeper, async (req, res) => {
+router.put("/:id", verifyToken, isShopkeeper,checkNotBlocked, async (req, res) => {
     try {
         const product = await Product.findOneAndUpdate({ _id: req.params.id, owner: req.user.id },
             req.body,
@@ -69,7 +61,7 @@ router.put("/:id", verifyToken, isShopkeeper, async (req, res) => {
     }
 })
 
-router.delete("/:id", verifyToken, isShopkeeper, async (req, res) => {
+router.delete("/:id", verifyToken, isShopkeeper,checkNotBlocked, async (req, res) => {
     try {
         const product = await Product.findOneAndDelete({ _id: req.params.id, owner: req.user.id })
         if (!product) return res.status(500).json({ message: "Product not Found" })

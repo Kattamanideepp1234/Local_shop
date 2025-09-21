@@ -171,7 +171,8 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-              <button onClick={() => cancelOrder(order._id)}>Cancel Order</button>
+              {order.status==="pending" &&
+              <button onClick={() => cancelOrder(order._id)}>Cancel Order</button>}
             </div>
           ))}
         </div>

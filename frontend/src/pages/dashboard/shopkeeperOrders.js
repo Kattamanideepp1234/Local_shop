@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import API from "../../api";
 import { AuthContext } from "../../context/AuthContext";
 
-export default function ShopkeeperOrders({setProducts}) {
+export default function ShopkeeperOrders({ setProducts }) {
     const [orders, setOrders] = useState([]);
     const { token } = useContext(AuthContext);
 
@@ -30,7 +30,11 @@ export default function ShopkeeperOrders({setProducts}) {
             setProducts(productsRes.data);
 
         } catch (err) {
-            alert(err.response?.data?.message || "Failed to complete order");
+            if (err.response?.status === 403) {
+                alert("🚫 You are blocked by Admin. You cannot complete orders.");
+            } else {
+                alert(err.response?.data?.message || "Failed to complete order");
+            }
         }
     }
 

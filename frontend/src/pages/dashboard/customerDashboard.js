@@ -9,18 +9,25 @@ export default function CustomerDashboard() {
     const [products, setProducts] = useState([]);
     const [activeTab, setActiveTab] = useState("products");
     const { token } = useContext(AuthContext);
+    const [search, setSearch] = useState("")
 
-    const fetchProducts=async()=>{
-        try{
-            const res= await API.get("/products");
+    const fetchProducts = async () => {
+        try {
+            const res = await API.get(`/products?search=${search}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setProducts(res.data);
-        }catch(error){
+        } catch (error) {
             alert(error);
         }
-    }
+    };
     useEffect(() => {
-        fetchProducts();
-    }, [])
+        const delayDebounce = setTimeout(() => {
+            fetchProducts();
+        }, 500);
+
+        return () => clearTimeout(delayDebounce);
+    }, [search])
 
     const addToCart = async (productId) => {
         try {
@@ -49,6 +56,13 @@ export default function CustomerDashboard() {
                         onClick={() => setActiveTab("orders")}>My Orders</button>
                 </div>
                 {activeTab === "products" && <>
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ marginBottom: "1rem", padding: "0.5rem" }}
+                    />
                     <div className="product-list">
                         {products.map(p => (
                             <div className="product-card" key={p._id}>
